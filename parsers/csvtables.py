@@ -587,6 +587,7 @@ def players(tournament,year):
         teams = ["home","away"]
         players = range(0,len(match["home"]["players"])-1)
         for team in teams:
+            players = range(0,len(match[team]["players"])-1)
             for number in players:
                 players_dict = {"wsmatchid":None,
                         "playerid":None,
