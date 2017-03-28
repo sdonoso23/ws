@@ -114,7 +114,7 @@ def matches(tournament,year):
     matches_df = matches_df[["wsmatchid","league","season","date","hometeamid","awayteamid","homescore","awayscore",
                             "homepkscore","awaypkscore","referee","managerhome","manageraway","attendance","venuename"]]
     matches_df.index.name = "id"
-    matches_df.to_csv(savepath+"matches.csv")
+    matches_df.to_csv(savepath+"matches.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
 
 
@@ -183,7 +183,7 @@ def satisfiedevents(tournament,year):
     sevents_df = pd.DataFrame(aux_list)
     sevents_df = sevents_df[["wsmatchid","wseventid","matcheventid","satisfiedeventid","satisfiedeventname","satisfiedeventvalue"]]
     sevents_df.index.name = "id"
-    sevents_df.to_csv(savepath+"satisfiedevents.csv")
+    sevents_df.to_csv(savepath+"satisfiedevents.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
 
 def formations(tournament,year):
@@ -289,7 +289,7 @@ def formations(tournament,year):
     formations_df = formations_df[["wsmatchid","teamid","formationid","formationname","captainplayerid","period","startminute",
                                   "endminute","playerid","slotnumber","xposition","yposition","subonplayerid","suboffplayerid"]]
     formations_df.index.name = "id"
-    formations_df.to_csv(savepath+"formations.csv")
+    formations_df.to_csv(savepath+"formations.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
 
 def events(tournament,year):
@@ -408,7 +408,7 @@ def events(tournament,year):
     events_df = events_df[["wsmatchid","wseventid","minute","second","expandedminute","teamid","playerid","period","typeid",
                           "type","outcometype","istouch","x","y","endX","endY"]]
     events_df.index.name = "id"
-    events_df.to_csv(savepath+"events.csv")
+    events_df.to_csv(savepath+"events.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
 
 def qualifiers(tournament,year):
@@ -475,7 +475,7 @@ def qualifiers(tournament,year):
     qual_df = pd.DataFrame(aux_list)
     qual_df = qual_df[["wsmatchid","wseventid","matcheventid","qualid","qualname","qualvalue"]]
     qual_df.index.name = "id"
-    qual_df.to_csv(savepath+"qualifiers.csv")
+    qual_df.to_csv(savepath+"qualifiers.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
 
 def teams(tournament,year):
@@ -519,7 +519,7 @@ def teams(tournament,year):
     teams_df = teams_df.drop_duplicates("teamid")
     teams_df = teams_df[["teamid","teamname"]]
     teams_df.index.name = "id"
-    teams_df.to_csv(savepath+"teams.csv")
+    teams_df.to_csv(savepath+"teams.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
 
 def referees(tournament,year):
@@ -560,7 +560,7 @@ def referees(tournament,year):
     referees_df = referees_df.drop_duplicates("refereeid")
     referees_df = referees_df[["refereeid","refereename"]]
     referees_df.index.name = "id"
-    referees_df.to_csv(savepath+"referees.csv")
+    referees_df.to_csv(savepath+"referees.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
 
 def players(tournament,year):
@@ -652,8 +652,8 @@ def players(tournament,year):
     players_list = players_list[["playerid","playername"]]
     players_df.index.name = "id"
     players_list.index.name = "id"
-    players_df.to_csv(savepath+"players.csv")
-    players_list.to_csv(savepath+"playerslist.csv")
+    players_df.to_csv(savepath+"players.csv",encoding="utf-8")
+    players_list.to_csv(savepath+"playerslist.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
 
 
