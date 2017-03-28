@@ -117,3 +117,4 @@ def matches(tournament,year):
                             "homepkscore","awaypkscore","referee","managerhome","manageraway","attendance","venuename"]]
     matches_df.index.name = "id"
     matches_df.to_csv(savepath+"matches.csv")
+    print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")

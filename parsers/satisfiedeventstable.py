@@ -66,9 +66,10 @@ def satisfiedevents(tournament,year):
                     except KeyError:
                         sevents_dict["satisfiedeventname"] = None
                     aux_list.append(sevents_dict)
-        print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
+    print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
 
-        sevents_df = pd.DataFrame(aux_list)
-        sevents_df = sevents_df[["wsmatchid","wseventid","matcheventid","satisfiedeventid","satisfiedeventname","satisfiedeventvalue"]]
-        sevents_df.index.name = "id"
-        sevents_df.to_csv(savepath+"satisfiedevents.csv")
+    sevents_df = pd.DataFrame(aux_list)
+    sevents_df = sevents_df[["wsmatchid","wseventid","matcheventid","satisfiedeventid","satisfiedeventname","satisfiedeventvalue"]]
+    sevents_df.index.name = "id"
+    sevents_df.to_csv(savepath+"satisfiedevents.csv")
+    print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
