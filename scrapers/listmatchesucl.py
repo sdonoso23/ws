@@ -4,20 +4,8 @@ import os
 import time
 import pickle
 import random as rn
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-def changeUserAgent(dcap_profile, userAgent):
-    dcap = dict(dcap_profile)
-    dcap["phantomjs.page.settings.userAgent"] = userAgent
-    return dcap
-
-dcap = changeUserAgent(
-    dcap_profile=DesiredCapabilities.PHANTOMJS,
-    userAgent="Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0")
-
-driver =  webdriver.PhantomJS(executable_path="C:/Users/Administrador.000/Downloads/phantomjs/bin/phantomjs",
-                              desired_capabilities=dcap)
-
+driver = webdriver.Firefox(executable_path="C:/Users/Administrador.000/Downloads/geckodriver-v0.15.0-win64/geckodriver.exe")
 
 url = "https://www.whoscored.com/Regions/250/Tournaments/12/Seasons/1868"
 
@@ -85,5 +73,6 @@ print("last matches done!")
 
 
 driver.close()
+driver.quit()
 matches_df = matches_df[matches_df.home_team_score.notnull()]
 matches_df.to_csv("../CSV/Lists/"+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
