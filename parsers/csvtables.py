@@ -16,8 +16,8 @@ def matches(tournament,year):
 
     for file in files:
         try:
-            f = open(str(pathfiles)+file,"r")
-            match = json.load(f)
+            f = open(str(pathfiles)+file,"r",encoding="utf-8")
+            match = json.load(f,encoding="utf-8")
             matchid = f.name.split("/")[4].replace(".json","")
             f.close()
         except UnicodeDecodeError:
@@ -136,8 +136,8 @@ def satisfiedevents(tournament,year):
 
     for file in files:
         try:
-            f = open(str(pathfiles)+file,"r")
-            match = json.load(f)
+            f = open(str(pathfiles)+file,"r",encoding="utf-8")
+            match = json.load(f,encoding="utf-8")
             matchid = f.name.split("/")[4].replace(".json","")
             f.close()
             events = match["events"]
@@ -199,8 +199,8 @@ def formations(tournament,year):
 
     for file in files:
         try:
-            f = open(str(pathfiles)+file,"r")
-            match = json.load(f)
+            f = open(str(pathfiles)+file,"r",encoding="utf-8")
+            match = json.load(f,encoding="utf-8")
             matchid = f.name.split("/")[4].replace(".json","")
             f.close()
             teams = ["home","away"]
@@ -305,8 +305,8 @@ def events(tournament,year):
 
     for file in files:
         try:
-            f = open(str(pathfiles)+file,"r")
-            match = json.load(f)
+            f = open(str(pathfiles)+file,"r",encoding="utf-8")
+            match = json.load(f,encoding="utf-8")
             matchid = f.name.split("/")[4].replace(".json","")
             f.close()
             events = match["events"]
@@ -333,7 +333,16 @@ def events(tournament,year):
                              "x":None,
                              "y":None,
                              "endX":None,
-                             "endY":None,}
+                             "endY":None,
+                             "relatedeventid":None,
+                             "relatedplayerid":None,
+                             "blockedx":None,
+                             "blockedy":None,
+                             "isshot":None,
+                             "goalmouthz":None,
+                             "goalmouthy":None,
+                             "isgoal":None,
+                             "cardtype":None,}
 
             try:
                 events_dict["wsmatchid"] = matchid
@@ -399,6 +408,43 @@ def events(tournament,year):
                 events_dict["endY"] = event["endY"]
             except KeyError:
                 events_dict["endY"] = None
+            try:
+                events_dict["relatedeventid"] = event["relatedEventId"]
+            except KeyError:
+                events_dict["relatedeventid"] = None
+            try:
+                events_dict["relatedplayerid"] = event["relatedPlayerId"]
+            except KeyError:
+                events_dict["relatedplayerid"] = None
+            try:
+                events_dict["blockedx"] = event["blockedX"]
+            except KeyError:
+                events_dict["blockedx"] = None
+            try:
+                events_dict["blockedy"] = event["blockedY"]
+            except KeyError:
+                events_dict["blockedy"] = None
+            try:
+                events_dict["isshot"] = event["isShot"]
+            except KeyError:
+                events_dict["isshot"] = None
+            try:
+                events_dict["goalmouthz"] = event["goalMouthZ"]
+            except KeyError:
+                events_dict["goalmouthz"] = None
+            try:
+                events_dict["goalmouthy"] = event["goalMouthY"]
+            except KeyError:
+                events_dict["goalmouthy"] = None
+            try:
+                events_dict["isgoal"] = event["isGoal"]
+            except KeyError:
+                events_dict["isgoal"] = None
+            try:
+                events_dict["cardtype"] = event["cardType"]["displayName"]
+            except KeyError:
+                events_dict["cardtype"] = None
+
 
             aux_list.append(events_dict)
 
@@ -406,7 +452,8 @@ def events(tournament,year):
     print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
     events_df = pd.DataFrame(aux_list)
     events_df = events_df[["wsmatchid","wseventid","minute","second","expandedminute","teamid","playerid","period","typeid",
-                          "type","outcometype","istouch","x","y","endX","endY"]]
+                          "type","outcometype","istouch","x","y","endX","endY","relatedeventid","relatedplayerid",
+                          "blockedx","blockedy","isshot","goalmouthz","goalmouthy","isgoal","cardtype"]]
     events_df.index.name = "id"
     events_df.to_csv(savepath+"events.csv",encoding="utf-8")
     print(time.strftime("%Y-%m-%d %H:%M:%S")," csv file done!")
@@ -424,8 +471,8 @@ def qualifiers(tournament,year):
 
     for file in files:
         try:
-            f = open(str(pathfiles)+file,"r")
-            match = json.load(f)
+            f = open(str(pathfiles)+file,"r",encoding="utf-8")
+            match = json.load(f,encoding="utf-8")
             matchid = f.name.split("/")[4].replace(".json","")
             f.close()
             events = match["events"]
@@ -491,8 +538,8 @@ def teams(tournament,year):
     aux_list=[]
     for file in files:
         try:
-            f = open(str(pathfiles)+file,"r")
-            match = json.load(f)
+            f = open(str(pathfiles)+file,"r",encoding="utf-8")
+            match = json.load(f,encoding="utf-8")
             matchid = f.name.split("/")[4].replace(".json","")
             f.close()
         except UnicodeDecodeError:
@@ -534,8 +581,8 @@ def referees(tournament,year):
 
     for file in files:
         try:
-            f = open(str(pathfiles)+file,"r")
-            match = json.load(f)
+            f = open(str(pathfiles)+file,"r",encoding="utf-8")
+            match = json.load(f,encoding="utf-8")
             matchid = f.name.split("/")[4].replace(".json","")
             f.close()
         except UnicodeDecodeError:
@@ -575,8 +622,8 @@ def players(tournament,year):
 
     for file in files:
         try:
-            f = open(str(pathfiles)+file,"r")
-            match = json.load(f)
+            f = open(str(pathfiles)+file,"r",encoding="utf-8")
+            match = json.load(f,encoding="utf-8")
             matchid = f.name.split("/")[4].replace(".json","")
             f.close()
         except UnicodeDecodeError:
