@@ -32,6 +32,8 @@ def matches(tournament,year):
         "date":None,
         "hometeamid":None,
         "awayteamid":None,
+        "hometeamname":None,
+        "awayteamname":None,
         "homescore":None,
         "awayscore":None,
         "homepkscore":None,
@@ -69,6 +71,14 @@ def matches(tournament,year):
             matches_dict["awayteamid"] = match["away"]["teamId"]
         except KeyError:
             matches_dict["awayteamid"] = None
+        try:
+            matches_dict["hometeamname"] = match["home"]["name"]
+        except KeyError:
+            matches_dict["hometeamname"] = None
+        try:
+            matches_dict["awayteamname"] = match["away"]["name"]
+        except KeyError:
+            matches_dict["awayteamname"] = None
         try:
             matches_dict["homescore"] = match["score"].split(" : ")[0]
         except KeyError:
@@ -111,7 +121,7 @@ def matches(tournament,year):
     print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
 
     matches_df = pd.DataFrame(aux_list)
-    matches_df = matches_df[["wsmatchid","league","season","date","hometeamid","awayteamid","homescore","awayscore",
+    matches_df = matches_df[["wsmatchid","league","season","date","hometeamid","awayteamid","hometeamname","awayteamname","homescore","awayscore",
                             "homepkscore","awaypkscore","referee","managerhome","manageraway","attendance","venuename"]]
     matches_df.index.name = "id"
     matches_df.to_csv(savepath+"matches.csv",encoding="utf-8")
@@ -220,7 +230,7 @@ def formations(tournament,year):
                                  "formationid":None,
                                  "formationname":None,
                                  "captainplayerid":None,
-                                 "period":None,
+                                 "formperiod":None,
                                  "startminute":None,
                                  "endminute":None,
                                  "playerid":None,
@@ -251,9 +261,9 @@ def formations(tournament,year):
                     except KeyError:
                         formations_dict["captainplayerid"] = None
                     try:
-                        formations_dict["period"] = formation["period"]
+                        formations_dict["formperiod"] = formation["period"]
                     except KeyError:
-                        formations_dict["period"] = None
+                        formations_dict["formperiod"] = None
                     try:
                         formations_dict["startminute"] = formation["startMinuteExpanded"]
                     except KeyError:
@@ -286,7 +296,7 @@ def formations(tournament,year):
     print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
 
     formations_df = pd.DataFrame(aux_list)
-    formations_df = formations_df[["wsmatchid","teamid","formationid","formationname","captainplayerid","period","startminute",
+    formations_df = formations_df[["wsmatchid","teamid","formationid","formationname","captainplayerid","formperiod","startminute",
                                   "endminute","playerid","slotnumber","xposition","yposition","subonplayerid","suboffplayerid"]]
     formations_df.index.name = "id"
     formations_df.to_csv(savepath+"formations.csv",encoding="utf-8")
@@ -352,6 +362,10 @@ def events(tournament,year):
                 events_dict["wseventid"] = event["id"]
             except KeyError:
                 events_dict["wseventid"] = None
+            try:
+                events_dict["matcheventid"] = event["eventId"]
+            except KeyError:
+                events_dict["matcheventid"] = None
             try:
                 events_dict["minute"] = event["minute"]
             except KeyError:
@@ -451,7 +465,7 @@ def events(tournament,year):
 
     print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
     events_df = pd.DataFrame(aux_list)
-    events_df = events_df[["wsmatchid","wseventid","minute","second","expandedminute","teamid","playerid","period","typeid",
+    events_df = events_df[["wsmatchid","wseventid","matcheventid","minute","second","expandedminute","teamid","playerid","period","typeid",
                           "type","outcometype","istouch","x","y","endX","endY","relatedeventid","relatedplayerid",
                           "blockedx","blockedy","isshot","goalmouthz","goalmouthy","isgoal","cardtype"]]
     events_df.index.name = "id"
@@ -637,6 +651,7 @@ def players(tournament,year):
             players = range(0,len(match[team]["players"])-1)
             for number in players:
                 players_dict = {"wsmatchid":None,
+                        "teamid":None,
                         "playerid":None,
                         "playername":None,
                         "position":None,
@@ -651,6 +666,10 @@ def players(tournament,year):
                     players_dict["wsmatchid"] = matchid
                 except KeyError:
                     players_dict["wsmatchid"] = None
+                try:
+                    players_dict["teamid"] = match[team]["teamId"]
+                except KeyError:
+                    players_dict["teamid"] = None
                 try:
                     players_dict["playerid"] = match[team]["players"][number]["playerId"]
                 except KeyError:
@@ -693,9 +712,9 @@ def players(tournament,year):
                 aux_list.append(players_dict)
     print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
     players_df = pd.DataFrame(aux_list)
-    players_df = players_df[["wsmatchid","playerid","playername","position","shirtno","manofthematch",
+    players_df = players_df[["wsmatchid","teamid","playerid","playername","position","shirtno","manofthematch",
                                               "matchrating","height","weight","age"]]
-    players_list = players_df.drop(["wsmatchid","position","shirtno","manofthematch","matchrating"],1)
+    players_list = players_df.drop(["wsmatchid","teamid","position","shirtno","manofthematch","matchrating"],1)
     players_list = players_list.drop_duplicates("playerid")
     players_list = players_list[["playerid","playername"]]
     players_df.index.name = "id"
