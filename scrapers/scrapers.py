@@ -162,6 +162,7 @@ def matcheslist(url):
     driver.close()
     driver.quit()
     matches_df = matches_df[matches_df.home_team_score.notnull()]
+    matches_df = matches_df.drop_duplicates("matchid")
     matches_df.to_csv("../CSV/Lists/"+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
 
 
