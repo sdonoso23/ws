@@ -529,7 +529,7 @@ def qualifiers(tournament,year):
                     try:
                         qual_dict["qualvalue"] = qualifier["value"]
                     except KeyError:
-                        qual_dict["qualvalue"] = None
+                        qual_dict["qualvalue"] = 1
                     aux_list.append(qual_dict)
 
     print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
