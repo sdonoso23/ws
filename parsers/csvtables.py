@@ -222,10 +222,13 @@ def formations(tournament,year):
             teams = ["home","away"]
         for team in teams:
             formations = match[team]["formations"]
+            count = 0
             for formation in formations:
                 numbers = [0,1,2,3,4,5,6,7,8,9,10]
+                count = count + 1
                 for number in numbers:
-                    formations_dict = {"wsmatchid":None,
+                    formations_dict = {"uniqueformationid":None,
+                                "wsmatchid":None,
                                  "teamid":None,
                                  "formationid":None,
                                  "formationname":None,
@@ -240,6 +243,10 @@ def formations(tournament,year):
                                  "subonplayerid":None,
                                  "suboffplayerid":None,
                                 }
+                    try:
+                        formations_dict["uniqueformationid"] = str(matchid)+str(match[team]["teamId"])+str(count)
+                    except KeyError:
+                        formations_dict["uniqueformationid"] = None
                     try:
                         formations_dict["wsmatchid"] = matchid
                     except KeyError:
@@ -296,7 +303,7 @@ def formations(tournament,year):
     print(time.strftime("%Y-%m-%d %H:%M:%S")," season done!")
 
     formations_df = pd.DataFrame(aux_list)
-    formations_df = formations_df[["wsmatchid","teamid","formationid","formationname","captainplayerid","formperiod","startminute",
+    formations_df = formations_df[["uniqueformationid","wsmatchid","teamid","formationid","formationname","captainplayerid","formperiod","startminute",
                                   "endminute","playerid","slotnumber","xposition","yposition","subonplayerid","suboffplayerid"]]
     formations_df.index.name = "id"
     formations_df.to_csv(savepath+"formations.csv",encoding="utf-8")
@@ -648,7 +655,7 @@ def players(tournament,year):
         teams = ["home","away"]
         players = range(0,len(match["home"]["players"])-1)
         for team in teams:
-            players = range(0,len(match[team]["players"])-1)
+            players = range(0,len(match[team]["players"]))
             for number in players:
                 players_dict = {"wsmatchid":None,
                         "teamid":None,
