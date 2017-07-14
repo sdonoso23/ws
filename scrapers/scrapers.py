@@ -8,7 +8,7 @@ import random as rn
 
 def databyid(matches):
 
-    driver = webdriver.Firefox(executable_path="C:/Users/Administrador.000/Downloads/geckodriver-v0.15.0-win64/geckodriver.exe")
+    driver = webdriver.Chrome(executable_path="C:/Users/Administrador.000/Downloads/chromedriver_win32/chromedriver.exe")
 
     for matchid in matches:
         path = "../JSON/"
@@ -44,7 +44,7 @@ def databyid(matches):
 
 def databylist(league,year,number):
 
-    driver = webdriver.Firefox(executable_path="C:/Users/Administrador.000/Downloads/geckodriver-v0.15.0-win64/geckodriver.exe")
+    driver = webdriver.Chrome(executable_path="C:/Users/Administrador.000/Downloads/chromedriver_win32/chromedriver.exe")
     file = "../CSV/Lists/"+str(league)+" "+str(year)+" Matches.csv"
 
 
@@ -105,7 +105,7 @@ def databylist(league,year,number):
 
 def matcheslist(url):
 
-    driver = webdriver.Firefox(executable_path="C:/Users/Administrador.000/Downloads/geckodriver-v0.15.0-win64/geckodriver.exe")
+    driver = webdriver.Chrome(executable_path="C:/Users/Administrador.000/Downloads/chromedriver_win32/chromedriver.exe")
 
     driver.get(url)
     league = driver.find_element_by_css_selector("#breadcrumb-nav").find_element_by_css_selector("#tournaments").find_element_by_css_selector("[selected]").text
@@ -168,7 +168,7 @@ def matcheslist(url):
 
 def uclmatcheslist(url):
 
-    driver = webdriver.Firefox(executable_path="C:/Users/Administrador.000/Downloads/geckodriver-v0.15.0-win64/geckodriver.exe")
+    driver = webdriver.Chrome(executable_path="C:/Users/Administrador.000/Downloads/chromedriver_win32/chromedriver.exe")
 
 
     driver.get(url)
@@ -241,7 +241,7 @@ def uclmatcheslist(url):
 
 
 def seasonslist(url):
-    driver = webdriver.Firefox(executable_path="C:/Users/Administrador.000/Downloads/geckodriver-v0.15.0-win64/geckodriver.exe")
+    driver = webdriver.Chrome(executable_path="C:/Users/Administrador.000/Downloads/chromedriver_win32/chromedriver.exe")
 
     driver.get(url)
 
