@@ -99,7 +99,7 @@ def databylist(league,year,number,driver,listpath,path):
     driver.quit()
 
 
-def matcheslist(url,driver,path):
+def matcheslist(url,driver,listpath):
 
 
     driver.get(url)
@@ -158,10 +158,10 @@ def matcheslist(url,driver,path):
     driver.quit()
     matches_df = matches_df[matches_df.home_team_score.notnull()]
     matches_df = matches_df.drop_duplicates("matchid")
-    matches_df.to_csv(str(path)+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
+    matches_df.to_csv(str(listpath)+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
 
 
-def uclmatcheslist(url,driver,path):
+def uclmatcheslist(url,driver,listpath):
 
     driver.get(url)
     league = driver.find_element_by_css_selector("#breadcrumb-nav").find_element_by_css_selector("#tournaments").find_element_by_css_selector("[selected]").text
@@ -229,10 +229,10 @@ def uclmatcheslist(url,driver,path):
     driver.close()
     driver.quit()
     matches_df = matches_df[matches_df.home_team_score.notnull()]
-    matches_df.to_csv(str(path)+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
+    matches_df.to_csv(str(listpath)+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
 
 
-def seasonslist(url,driver,path):
+def seasonslist(url,driver,listpath):
     
     driver.get(url)
 
@@ -253,11 +253,11 @@ def seasonslist(url,driver,path):
 
     driver.close()
     driver.quit()
-    seasons_df.to_csv(str(path)+str(league)+" "+"Seasons"+".csv")
+    seasons_df.to_csv(str(listpath)+str(league)+" "+"Seasons"+".csv")
 
 
 
-def brasilmatcheslist(url,driver,path):
+def brasilmatcheslist(url,driver,listpath):
 
 
     driver.get(url)
@@ -316,10 +316,10 @@ def brasilmatcheslist(url,driver,path):
     driver.quit()
     matches_df = matches_df[matches_df.home_team_score.notnull()]
     matches_df = matches_df.drop_duplicates("matchid")
-    matches_df.to_csv(str(path)+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
+    matches_df.to_csv(str(listpath)+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
 
 
-def eredmatcheslist(url,driver,path):
+def eredmatcheslist(url,driver,listpath):
 
     driver.get(url)
     league = driver.find_element_by_css_selector("#breadcrumb-nav").find_element_by_css_selector("#tournaments").find_element_by_css_selector("[selected]").text
@@ -410,7 +410,7 @@ def eredmatcheslist(url,driver,path):
     driver.close()
     driver.quit()
     matches_df = matches_df[matches_df.home_team_score.notnull()]
-    matches_df.to_csv(str(path)+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
+    matches_df.to_csv(str(listpath)+str(league)+" "+str(year.replace("/","-"))+" Matches.csv")
 
 def brasildatabylist(league,year,number,driver,listpath,path):
 
