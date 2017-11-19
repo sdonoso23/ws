@@ -105,9 +105,14 @@ def matcheslist(url,driver,listpath):
     driver.get(url)
     league = driver.find_element_by_css_selector("#breadcrumb-nav").find_element_by_css_selector("#tournaments").find_element_by_css_selector("[selected]").text
     year = driver.find_element_by_css_selector("#breadcrumb-nav").find_element_by_css_selector("#seasons").find_element_by_css_selector("[selected]").text
+    time.sleep(10)
+    try:
+        driver.find_element_by_css_selector("#sub-navigation").find_elements_by_css_selector("a")[1].click()
+    except WebDriverException:
 
-    driver.find_element_by_css_selector("#sub-navigation").find_elements_by_css_selector("a")[1].click()
-    time.sleep(5)
+        time.sleep(5)
+        driver.find_element_by_css_selector("#sub-navigation").find_elements_by_css_selector("a")[1].click()
+
     matches_df = pd.DataFrame(columns=["league","year","matchid","home_team","away_team","home_team_score","away_team_score"])
     matches = driver.find_element_by_id("tournament-fixture").find_elements_by_css_selector("tr")
     matchcount = 0
@@ -131,8 +136,9 @@ def matcheslist(url,driver,listpath):
                 matchcount = matchcount+1
                 continue
         print(matchcount, " matches done!")
+        time.sleep(10)
         driver.find_element_by_id("date-controller").find_elements_by_css_selector("a")[0].click()
-        time.sleep(rn.randint(3,5))
+        time.sleep(rn.randint(7,10))
         matches = driver.find_element_by_id("tournament-fixture").find_elements_by_css_selector("tr")
 
     for match in matches:
