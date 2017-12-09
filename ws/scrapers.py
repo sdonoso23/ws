@@ -105,12 +105,12 @@ def matcheslist(url,driver,listpath):
     driver.get(url)
     league = driver.find_element_by_css_selector("#breadcrumb-nav").find_element_by_css_selector("#tournaments").find_element_by_css_selector("[selected]").text
     year = driver.find_element_by_css_selector("#breadcrumb-nav").find_element_by_css_selector("#seasons").find_element_by_css_selector("[selected]").text
-    time.sleep(10)
+    time.sleep(20)
     try:
         driver.find_element_by_css_selector("#sub-navigation").find_elements_by_css_selector("a")[1].click()
-    except WebDriverException:
+    except:
 
-        time.sleep(5)
+        time.sleep(10)
         driver.find_element_by_css_selector("#sub-navigation").find_elements_by_css_selector("a")[1].click()
 
     matches_df = pd.DataFrame(columns=["league","year","matchid","home_team","away_team","home_team_score","away_team_score"])
