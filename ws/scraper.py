@@ -5,54 +5,56 @@ import time
 import random as rn
 import pickle
 import copy
-
+from ws.constants import LEAGUES, LISTPATH, JSONPATH, DRIVERPATH
 
 class Scraper:
 
-	def __init__(self,leagues,jsonpath,listpath,driverpath):
+	def __init__(self,league,season,jsonpath=JSONPATH,listpath=LISTPATH,driverpath=DRIVERPATH):
 
-		self.leagues = leagues
+		self.league = league
+		self.leaguename = self.league.lower().replace(" ","_")
+		self.countryid = LEAGUES[self.league]["countryid"]
+		self.leagueid = LEAGUES[self.league]["leagueid"]
+		
 		self.path = jsonpath
 		self.listpath = listpath
 		self.driverpath = driverpath
 
-	def __setLeague__(self,league):
+		self.__seasonsList__()
+		self.season = season
+		self.seasonid = self.seasons[season]
+		
+		self.__matchesList__()
 
-	    self.league = league
-	    self.countryid = self.leagues[self.league]["countryid"]
-	    self.leagueid = self.leagues[self.league]["leagueid"]
+	def getParams(self):
+
+		print("League: %s" % self.league)
+		print("Season: %s" % self.season)
+		print("Number of matches: %i" % len(self.matches))
+		print("Save path: %s" % self.path)
+		print("List path: %s" % self.listpath)
+		print("Driver path: %s" % self.driverpath)
+
 
 	def __seasonsList__(self):
         
-		if os.path.isfile(self.listpath+self.league+" Seasons.pkl"):
-			with open(self.listpath+self.league+" Seasons.pkl","rb") as pkl: 
+		if os.path.isfile(self.listpath+self.leaguename+"_seasons.pkl"):
+			with open(self.listpath+self.leaguename+"_seasons.pkl","rb") as pkl: 
  				self.seasons = pickle.load(pkl)
 		else:
 			self.updateSeasons()
-			with open(self.listpath+self.league+" Seasons.pkl","rb") as pkl: 
+			with open(self.listpath+self.leaguename+"_seasons.pkl","rb") as pkl: 
 				self.seasons = pickle.load(pkl)
 
 	def __matchesList__(self):
         
-		if os.path.isfile(self.listpath+self.league+" "+self.season+" Matches.pkl"):
-			with open(self.listpath+self.league+" "+self.season+" Matches.pkl","rb") as pkl: 
+		if os.path.isfile(self.listpath+self.leaguename+"_"+self.season+"_matches.pkl"):
+			with open(self.listpath+self.leaguename+"_"+self.season+"_matches.pkl","rb") as pkl: 
  				self.matches = pickle.load(pkl)
 		else:
 			self.updateMatchesList()
-			with open(self.listpath+self.league+" "+self.season+" Matches.pkl","rb") as pkl: 
+			with open(self.listpath+self.leaguename+"_"+self.season+"_matches.pkl","rb") as pkl: 
 				self.matches = pickle.load(pkl)
-
-	def __setSeason__(self,season):
-
-		self.season = season
-		self.seasonid = self.seasons[season]
-
-	def setParams(self,league,season):	
-
-		self.__setLeague__(league)
-		self.__seasonsList__()
-		self.__setSeason__(season)
-		self.__matchesList__()
 
 	def __openDriver__(self):
 
@@ -78,7 +80,7 @@ class Scraper:
 
 		self.__closeDriver__()
 
-		with open(self.listpath+self.league+" Seasons.pkl","wb") as f: 
+		with open(self.listpath+self.leaguename+"_seasons.pkl","wb") as f: 
 			pickle.dump(seasons_dict,f)
 
 	def updateMatchesList(self):
@@ -89,25 +91,20 @@ class Scraper:
 		
 		self.driver.get(url)
 
-		time.sleep(15)
-
-		#try:
-		#	self.driver.find_element_by_css_selector("#sub-navigation").find_elements_by_css_selector("a")[1].click()
-		#except:
-		#	time.sleep(10)
-		#	self.driver.find_element_by_css_selector("#sub-navigation").find_elements_by_css_selector("a")[1].click()
-
 		matches = self.driver.find_element_by_id("tournament-fixture").find_elements_by_css_selector("tr")
 
 		agg = []
 
+		el = self.driver.find_element_by_id("date-controller").find_elements_by_css_selector("a")[0]
+		loc = el.location_once_scrolled_into_view
+		self.driver.execute_script("window.scrollTo(%i, %i)" % (loc["x"],loc["y"])) 
+
+
 		while self.driver.find_element_by_id("date-controller").find_elements_by_css_selector("a")[0].get_attribute("title") == "View previous week":
 
 			agg.append(self.__scrapeMatchesList__(matches))
-			
-			time.sleep(3)
-			self.driver.find_element_by_id("date-controller").find_elements_by_css_selector("a")[0].click()
-			time.sleep(5)
+			el.click()
+			time.sleep(1)
 			matches = self.driver.find_element_by_id("tournament-fixture").find_elements_by_css_selector("tr")
 
 		agg.append(self.__scrapeMatchesList__(matches))
@@ -119,7 +116,7 @@ class Scraper:
 		matches_df = pd.concat(agg)
 		matches_list = matches_df[matches_df.home_team_score.notnull()].drop_duplicates("matchid")["matchid"].tolist()
 
-		with open(self.listpath+self.league+" "+self.season+" Matches.pkl","wb") as f: 
+		with open(self.listpath+self.leaguename+"_"+self.season+"_matches.pkl","wb") as f: 
 			pickle.dump(matches_list,f)
 
 	def __scrapeMatchesList__(self,matches):
@@ -152,7 +149,7 @@ class Scraper:
 		deletematches = []
 
 		for match in listofmatches:
-		    if os.path.exists(str(self.path)+str(self.league)+"/"+str(self.season)+"/"+str(match)+".json"):
+		    if os.path.exists(str(self.path)+str(self.leaguename)+"/"+str(self.season)+"/"+str(match)+".json"):
 		        deletematches.append(match)
 
 		print("you already have ", len(deletematches)," matches")
@@ -196,9 +193,9 @@ class Scraper:
 		        source_code = source_code.split(start)[1].split(end)[0]
 		    except IndexError as e:
 		        print(matchid," Error")
-		    if not os.path.exists(str(self.path)+"/"+str(self.league)+"/"+str(self.season)):
-		        os.makedirs(str(self.path)+"/"+str(self.league)+"/"+str(self.season))
-		    f = open(str(self.path)+"/"+str(self.league)+"/"+str(self.season)+"/"+str(matchid)+".json", 'w',encoding="utf-8")
+		    if not os.path.exists(str(self.path)+"/"+str(self.leaguename)+"/"+str(self.season)):
+		        os.makedirs(str(self.path)+"/"+str(self.leaguename)+"/"+str(self.season))
+		    f = open(str(self.path)+"/"+str(self.leaguename)+"/"+str(self.season)+"/"+str(matchid)+".json", 'w',encoding="utf-8")
 		    count = count + 1
 		    print(time.strftime("%Y-%m-%d %H:%M:%S")," ",count, "matches done " ,source_code[0],source_code[1],source_code[-1])
 		    try:
