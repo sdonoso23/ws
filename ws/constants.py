@@ -27,4 +27,4 @@ LEAGUES = {"La Liga":{"countryid":206,"leagueid":4},
 
 LISTPATH = "../data/lists/"
 JSONPATH = "../data/json/"
-DRIVERPATH = "../../chromedriver/chromedriver"
+DRIVERPATH = "../../software/chromedriver/chromedriver"
