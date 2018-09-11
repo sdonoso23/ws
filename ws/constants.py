@@ -1,5 +1,5 @@
 import json 
-
+from pymongo import MongoClient
 
 tourn = open("../data/tournaments.json","r",encoding="UTF-8")
 b = json.load(tourn)
@@ -22,9 +22,16 @@ LEAGUES = {"La Liga":{"countryid":206,"leagueid":4},
     	"Super Lig":{"countryid":225,"leagueid":17},
     	"Primera Argentina":{"countryid":11,"leagueid":68},
     	"UEFA Champions League":{"countryid":250,"leagueid":12},
-    	"UEFA Europa League":{"countryid":250,"leagueid":30}}
+    	"UEFA Europa League":{"countryid":250,"leagueid":30},
+        "FIFA World Cup":{"countryid":247,"leagueid":36},
+        "Major League Soccer":{"countryid":233,"leagueid":85}}
 
 
 LISTPATH = "../data/lists/"
 JSONPATH = "../data/json/"
 DRIVERPATH = "../../software/chromedriver/chromedriver"
+SEASON_DEPTH = 10
+
+
+CLIENT = MongoClient()
+DB = CLIENT["football"]
