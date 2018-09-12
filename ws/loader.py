@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 
-class League():
+class JSONLeague():
 
     jsonpath = JSONPATH
 
@@ -19,7 +19,7 @@ class League():
         for s in self.seasons}
         self.season = self.seasons[-1]
 
-    def matchesList(self, season=None):
+    def matchesList(self):
         return self.matcheslists[self.season]
 
     def numberMatches(self):
@@ -32,10 +32,10 @@ class League():
         return self
 
     def importMatch(self, number):
-        return Match(number, self.league, self.season, JSONPATH)
+        return JSONMatch(number, self.league, self.season, JSONPATH)
 
 
-class Match():
+class JSONMatch():
 
     def __init__(self, matchid, league, season, jsonpath=JSONPATH):
         self.league = league
@@ -51,9 +51,13 @@ class Match():
 
     def matchInfo(self):
 
-        print("%s - %s Season" % (self.league, self.season))
-        print("%s" % self.date)
-        print("%s - %s" % (self.home,self.away))
+       data = {"League":self.league,
+               "Season":self.season,
+               "Home":self.home,
+               "Away":self.away,
+               "Date":pd.to_datetime(self.date)}
+
+       return pd.Series(data)
 
 
 class MatchLoader():
@@ -62,8 +66,8 @@ class MatchLoader():
 
         self.db = db
 
-        if not isinstance(match, Match):
-            raise(TypeError,"match must be of Match type")
+        if not isinstance(match, JSONMatch):
+            raise(TypeError,"match must be of JSONMatch type")
 
         self.match = match
         self.match_data = match.match
@@ -90,19 +94,38 @@ class MatchLoader():
     def matches(self):
 
 
-        data = {
-                "league": self.match.league,
-                "season": self.match.season,
-                "date": self.match.date,
-                "homeName" : self.match.home,
-                "homeId": self.match_data["home"]["teamId"],
-                "homeManager": self.match_data["home"]["managerName"],
-                "awayName" : self.match.away,
-                "awayId": self.match_data["away"]["teamId"],
-                "awayManager": self.match_data["away"]["managerName"],
-                "referee": self.match_data["referee"]["name"],
-                "venue": self.match_data["venueName"],
-                }
+        data = {}
+
+        data["league"] = self.match.league
+        data["season"] = self.match.season
+        data["date"] = self.match.date
+        data["homeName"] = self.match.home
+        try:
+            data["homeId"] = self.match_data["home"]["teamId"]
+        except KeyError:
+            data["homeId"] = None
+        try:
+            data["homeManager"] = self.match_data["home"]["managerName"]
+        except KeyError:
+            data["homeManager"] = None
+        data["awayName"] = self.match.away
+        try:
+            data["awayId"] = self.match_data["away"]["teamId"]
+        except KeyError:
+            data["awayId"] = None
+        try:
+            data["awayManager"] =  self.match_data["away"]["managerName"]
+        except KeyError:
+            data["awayManager"] = None
+        try:
+            data["referee"] = self.match_data["referee"]["name"]
+        except KeyError:
+            data["referee"] = None
+        try:
+            data["venue"] = self.match_data["venueName"]
+        except KeyError:
+            data["venue"] = None
+
 
         self.db["matches"].update_one({"wsMatchId":self.match.matchid},
                                       {'$setOnInsert': data}, upsert=True)
@@ -113,20 +136,15 @@ class MatchLoader():
 
         events = self.match_data["events"]
 
-        if len(events) == self.db["events"].count({"wsMatchId":self.match.matchid}):
-            return self
 
-        else:
-            for event in events:
+        for event in events:
 
-                event["wsMatchId"] = self.match.matchid
+            event["wsMatchId"] = self.match.matchid
+            event["wsEventId"] = str(self.match.matchid)+str(event["id"])
 
-                self.db["events"].update_one({"wsEventId": str(self.match.matchid)+str(event["id"])},
-                                            {'$setOnInsert': event}, upsert=True)
-
+        self.db["events"].insert_many(events)
 
         return self
-
 
 
 

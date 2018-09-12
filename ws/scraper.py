@@ -298,7 +298,7 @@ class Scraper:
 
             try:
                 f = open(path + str(matchid) + ".json",
-                    'w', encoding="utf-8")
+                    'wr', encoding="utf-8")
                 f.write(source_code)
                 print(time.strftime("%Y-%m-%d %H:%M:%S"), " ", count, "matches done ", source_code[0], source_code[1],
                       source_code[-1])

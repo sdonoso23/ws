@@ -35,3 +35,4 @@ SEASON_DEPTH = 10
 
 CLIENT = MongoClient()
 DB = CLIENT["football"]
+DB_TEST = CLIENT["test"]
