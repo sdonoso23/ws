@@ -5,11 +5,12 @@ import time
 import random as rn
 import pickle
 import copy
-from ws.constants import LEAGUES, LISTPATH, JSONPATH, DRIVERPATH, SEASON_DEPTH
+from ws.constants import LEAGUES, LISTPATH, JSONPATH, DRIVERPATH, SEASON_DEPTH, DB
+from ws.loader import JSONMatch, MatchLoader
 
 class Scraper:
 
-    def __init__(self,league,jsonpath=JSONPATH,listpath=LISTPATH,driverpath=DRIVERPATH,season_depth = SEASON_DEPTH):
+    def __init__(self,league,jsonpath=JSONPATH,listpath=LISTPATH,driverpath=DRIVERPATH,season_depth = SEASON_DEPTH, db=DB):
 
         self.league = league
         self.leaguename = self.league.lower().replace(" ","_")
@@ -17,6 +18,7 @@ class Scraper:
         self.leagueid = LEAGUES[self.league]["leagueid"]
         self.season_depth = season_depth
 
+        self.db = db
         self.path = jsonpath
         self.listpath = listpath
         self.driverpath = driverpath
@@ -258,7 +260,7 @@ class Scraper:
 
         return listofmatches
 
-    def getMatches(self,number):
+    def getMatches(self,number,save=True):
 
         matches = self.__checkMatches__()[0:number]
 
@@ -266,13 +268,13 @@ class Scraper:
 
         self.__openDriver__()
 
-        self.__getMatches__(matches)
+        self.__getMatches__(matches,save=save)
 
         self.__closeDriver__()
 
         return self
 
-    def __getMatches__(self,matches):
+    def __getMatches__(self,matches,save=True):
 
         path = self.__createPath__()
 
@@ -298,14 +300,20 @@ class Scraper:
 
             try:
                 f = open(path + str(matchid) + ".json",
-                    'wr', encoding="utf-8")
+                    'w', encoding="utf-8")
                 f.write(source_code)
+                f.close()
+
+                if save:
+                    match = JSONMatch(matchid, self.league, self.season, self.path)
+                    loader = MatchLoader(self.db,match)
+                    loader.teams().players().matches().events()
+
                 print(time.strftime("%Y-%m-%d %H:%M:%S"), " ", count, "matches done ", source_code[0], source_code[1],
                       source_code[-1])
             except UnicodeEncodeError:
                 print(matchid,"Unicode error")
 
-            f.close()
             time.sleep(rn.randint(20,25))
 
         self.savedmatches = list(
