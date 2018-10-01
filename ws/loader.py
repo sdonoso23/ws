@@ -41,7 +41,7 @@ class JSONMatch():
         self.league = league
         self.season = season
         self.leaguename = self.league.lower().replace(" ", "_")
-        self.matchid = matchid
+        self.matchid = int(matchid)
         self.jsonpath = jsonpath
         self.matchpath = jsonpath + self.leaguename + "/" + self.season + "/" + str(self.matchid) + ".json"
         self.match = json.load(open(self.matchpath, "r", encoding="utf-8"), encoding="utf-8")
@@ -136,6 +136,8 @@ class MatchLoader():
 
         events = self.match_data["events"]
 
+        if len(events) == self.db["events"].find({"wsMatchId":self.match.matchid}).count():
+            return self
 
         for event in events:
 
