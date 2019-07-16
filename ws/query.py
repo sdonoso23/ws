@@ -16,7 +16,7 @@ class BaseQuery():
         return self.db[collection].find(condition)
 
     def getMatch(self,matchid):
-        return Match(self.db, matchid)
+        return Match(self, matchid)
 
     def getLeagueMatchesInfo(self, league, season):
         return pd.DataFrame(list(self.query("matches", {"$and": [{"league": league}, {"season": season}]})))
@@ -64,15 +64,17 @@ class BaseQuery():
 
         quals_shots = self.getQualifiers(condition={"_id": {"$in": df_shots.index.tolist()}})
 
+        quals_shots = quals_shots[(quals_shots["Penalty"] != 1) | (quals_shots["OwnGoal"] != 1)]
+
         SHOT_QUALS = ["Assisted", "DirectFreekick", "RegularPlay",
                       "FromCorner", "RightFoot", "LeftFoot", "Head",
-                      "SetPiece", "ThrowinSetPiece", "OtherBodyPart", "Penalty"]
+                      "SetPiece", "ThrowinSetPiece", "OtherBodyPart"]
 
         dataset = df_shots[["x", "y"]].merge(quals_shots[SHOT_QUALS], right_index=True, left_index=True).fillna(
             0).sort_index()
 
 
-        return dataset, y
+        return dataset, y.loc[dataset.index]
 
 
 
@@ -130,7 +132,7 @@ class Match():
 
     def shots(self):
 
-        df = self.events
+        df = self.events()
 
         shots_types = ["ShotOnPost", "SavedShot", "MissedShots", "Goal"]
 
@@ -140,17 +142,27 @@ class Match():
 
         quals_shots = self.bq.getQualifiers(condition={"_id": {"$in": df_shots.index.tolist()}})
 
+        if "Penalty" in quals_shots.columns:
+
+            quals_shots = quals_shots[(quals_shots["Penalty"] != 1)]
+
+        if "OwnGoal" in quals_shots.columns:
+
+            quals_shots = quals_shots[quals_shots["OwnGoal"] != 1]
+
         SHOT_QUALS = ["Assisted", "DirectFreekick", "RegularPlay",
                       "FromCorner", "RightFoot", "LeftFoot", "Head",
-                      "SetPiece", "ThrowinSetPiece", "OtherBodyPart", "Penalty"]
+                      "SetPiece", "ThrowinSetPiece", "OtherBodyPart"]
 
         inter = quals_shots.columns.intersection(SHOT_QUALS)
+
+        dif = set(SHOT_QUALS).difference(quals_shots.columns)
 
         dataset = df_shots[["x", "y"]].merge(quals_shots[inter], right_index=True, left_index=True).fillna(
             0).sort_index()
 
+        dataset = pd.concat([dataset, pd.DataFrame(0, index=dataset.index, columns=dif)], axis=1)[["x", "y"] + SHOT_QUALS]
 
-
-        return dataset, y
+        return dataset, y.loc[dataset.index]
 
 
